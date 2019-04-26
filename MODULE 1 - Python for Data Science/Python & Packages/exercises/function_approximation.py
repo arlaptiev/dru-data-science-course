@@ -33,6 +33,27 @@ def val_vector(Xs, func):
     return v
 
 
+def solve_coef(Xs, func):
+    """Returns the coefficients of the polynomial, approximated
+    at Xs to function func"""
+    A = coef_matrix(Xs)  # np.array([[1, 1], [1, 15]])
+    b = val_vector(Xs, f)  # np.array([f(1), f(15)])
+    return scipy.linalg.solve(A, b)  # solve for coefficients
+
+
+def poly(w, x):
+    """Returns the values of the approximation function"""
+    y = w[0] * np.power(x, 0)
+    for n in range(1, len(w)):
+        y += w[n] * np.power(x, n)
+    return y
+
+
+def func_approximate(func, Xs, x):
+    """Approximate values of the funtion with len(Xs) degree polynomial"""
+    return poly(solve_coef(Xs, func), x)
+
+
 if __name__ == '__main__':
 
     x = np.linspace(0, 15, 50)
@@ -44,7 +65,7 @@ if __name__ == '__main__':
     ax.set_ylim([0, 6])
 
     # 1st degree polynomial
-    Xs = [1, 15]  # approximate polynomial with these X
+    Xs = [1., 15.]  # approximate polynomial with these X
 
     A = coef_matrix(Xs)  # np.array([[1, 1], [1, 15]])
     b = val_vector(Xs, f)  # np.array([f(1), f(15)])
@@ -55,24 +76,12 @@ if __name__ == '__main__':
     ax.plot(x, y, 'r--')
 
     # 2nd degree polynomial
-    Xs = [1, 8, 15]  # approximate polynomial with these X
-
-    A = coef_matrix(Xs)  # np.array([[1, 1], [1, 15]])
-    b = val_vector(Xs, f)  # np.array([f(1), f(15)])
-    w = scipy.linalg.solve(A, b)  # solve for coefficients
-
-    y = w[0] + w[1] * x + w[2] * np.power(x, 2)
+    y = func_approximate(f, [1., 8., 15.], x)
 
     ax.plot(x, y, 'y--')
 
     # 3rd degree polynomial
-    Xs = [1., 4., 10., 15.]  # approximate polynomial with these X
-
-    A = coef_matrix(Xs)  # np.array([[1, 1], [1, 15]])
-    b = val_vector(Xs, f)  # np.array([f(1), f(15)])
-    w = scipy.linalg.solve(A, b)  # solve for coefficients
-
-    y = w[0] + w[1] * x + w[2] * np.power(x, 2) + w[3] * np.power(x, 3)
+    y = func_approximate(f, [1., 4., 10., 15.], x)
 
     ax.plot(x, y, 'b--')
 
